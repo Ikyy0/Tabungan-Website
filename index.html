@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>TabungKu - Smart Saving</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="logo">
+      <div class="logo-icon">💎</div>
+      <span>Tabung<span>Ku</span></span>
+    </div>
+
+    <nav>
+
+      <button class="nav active" onclick="showPage('dashboard', this)">
+        🏠 <span>Dashboard</span>
+      </button>
+
+      <button class="nav" onclick="showPage('transactions', this)">
+        💳 <span>Transaksi</span>
+      </button>
+
+      <button class="nav" onclick="showPage('goals', this)">
+        🎯 <span>Target</span>
+      </button>
+
+      <button class="nav" onclick="showPage('calculator', this)">
+        🧮 <span>Kalkulator</span>
+      </button>
+
+      <button class="nav" onclick="showPage('statistics', this)">
+        📊 <span>Statistik</span>
+      </button>
+
+    </nav>
+
+    <div class="side-bottom">
+
+      <button onclick="exportData()">📤 Export Data</button>
+
+      <button onclick="resetData()">♻️ Reset Data</button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HEADER -->
+    <header class="header">
+
+      <div>
+        <p>Selamat datang 👋</p>
+        <h1>Dompet Tabungan</h1>
+      </div>
+
+      <div class="header-actions">
+
+        <button class="circle-btn" onclick="toggleTheme()">
+          🌙
+        </button>
+
+        <div class="avatar">
+          IK
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <section id="dashboard" class="page active">
+
+      <!-- SALDO -->
+      <div class="balance-card">
+
+        <div>
+
+          <span>Total Tabungan</span>
+
+          <h2 id="balance">
+            Rp 0
+          </h2>
+
+          <small>
+            💎 Kelola uangmu dengan lebih pintar
+          </small>
+
+        </div>
+
+        <div class="balance-icon">
+          💰
+        </div>
+
+      </div>
+
+
+      <!-- QUICK ACTION -->
+
+      <div class="section-title">
+
+        <div>
+          <small>Aksi Cepat</small>
+          <h2>Kelola Tabungan</h2>
+        </div>
+
+      </div>
+
+
+      <div class="quick-grid">
+
+        <button class="quick income" onclick="openTransaction('income')">
+
+          <div class="quick-icon">
+            ＋
+          </div>
+
+          <div>
+            <strong>Tambah Uang</strong>
+            <small>Masukkan tabungan</small>
+          </div>
+
+        </button>
+
+
+        <button class="quick expense" onclick="openTransaction('expense')">
+
+          <div class="quick-icon">
+            −
+          </div>
+
+          <div>
+            <strong>Pengeluaran</strong>
+            <small>Catat pengeluaran</small>
+          </div>
+
+        </button>
+
+
+        <button class="quick target" onclick="openGoal()">
+
+          <div class="quick-icon">
+            🎯
+          </div>
+
+          <div>
+            <strong>Target Baru</strong>
+            <small>Buat impian baru</small>
+          </div>
+
+        </button>
+
+      </div>
+
+
+      <!-- TWO COLUMNS -->
+
+      <div class="two-column">
+
+        <!-- TARGET -->
+
+        <div class="card">
+
+          <div class="card-header">
+
+            <div>
+              <small>Target Utama</small>
+              <h3 id="mainGoalName">
+                Belum ada target
+              </h3>
+            </div>
+
+            <button class="small-btn" onclick="openGoal()">
+              ＋
+            </button>
+
+          </div>
+
+
+          <div class="goal-value">
+
+            <strong id="goalCurrent">
+              Rp 0
+            </strong>
+
+            <span id="goalTarget">
+              / Rp 0
+            </span>
+
+          </div>
+
+
+          <div class="progress">
+            <div id="goalProgress"></div>
+          </div>
+
+
+          <div class="progress-info">
+
+            <span id="goalPercent">
+              0%
+            </span>
+
+            <span id="goalRemaining">
+              Rp 0 lagi
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- RINGKASAN -->
+
+        <div class="card">
+
+          <div class="card-header">
+
+            <div>
+              <small>Ringkasan</small>
+              <h3>Keuanganmu</h3>
+            </div>
+
+            <span class="emoji">
+              📊
+            </span>
+
+          </div>
+
+
+          <div class="summary">
+
+            <div>
+              <small>Pemasukan</small>
+              <strong class="green" id="incomeTotal">
+                Rp 0
+              </strong>
+            </div>
+
+            <div>
+              <small>Pengeluaran</small>
+              <strong class="red" id="expenseTotal">
+                Rp 0
+              </strong>
+            </div>
+
+            <div>
+              <small>Transaksi</small>
+              <strong id="transactionTotal">
+                0
+              </strong>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- RECENT -->
+
+      <div class="card transactions-card">
+
+        <div class="card-header">
+
+          <div>
+            <small>Aktivitas</small>
+            <h3>Transaksi Terbaru</h3>
+          </div>
+
+          <button class="link-btn"
+            onclick="showPage('transactions')">
+            Lihat semua →
+          </button>
+
+        </div>
+
+        <div id="recentTransactions"></div>
+
+      </div>
+
+
+      <!-- ACHIEVEMENT -->
+
+      <div class="achievement card">
+
+        <div>
+
+          <small>🏆 Achievement</small>
+
+          <h3 id="achievement">
+            Penabung Pemula
+          </h3>
+
+          <p>
+            Terus konsisten menabung untuk membuka level berikutnya.
+          </p>
+
+        </div>
+
+        <div class="trophy">
+          🏆
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= TRANSACTIONS ================= -->
+
+    <section id="transactions" class="page">
+
+      <div class="page-heading">
+        <small>Money Activity</small>
+        <h2>Semua Transaksi</h2>
+      </div>
+
+      <div class="filter">
+
+        <input
+          id="search"
+          type="text"
+          placeholder="🔍 Cari transaksi..."
+          oninput="renderTransactions()"
+        >
+
+        <select id="filter"
+          onchange="renderTransactions()">
+
+          <option value="all">
+            Semua
+          </option>
+
+          <option value="income">
+            Pemasukan
+          </option>
+
+          <option value="expense">
+            Pengeluaran
+          </option>
+
+        </select>
+
+      </div>
+
+      <div class="card">
+
+        <div id="allTransactions"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= GOALS ================= -->
+
+    <section id="goals" class="page">
+
+      <div class="page-heading">
+
+        <small>Dream Planner</small>
+
+        <h2>Target Tabungan</h2>
+
+      </div>
+
+      <button class="primary" onclick="openGoal()">
+        ＋ Tambah Target
+      </button>
+
+      <div id="goalsList" class="goals-grid"></div>
+
+    </section>
+
+
+    <!-- ================= CALCULATOR ================= -->
+
+    <section id="calculator" class="page">
+
+      <div class="page-heading">
+
+        <small>Smart Calculator</small>
+
+        <h2>Kalkulator Tabungan</h2>
+
+      </div>
+
+
+      <div class="card calculator">
+
+        <label>
+          Target Tabungan
+        </label>
+
+        <input
+          id="calcTarget"
+          type="number"
+          placeholder="10000000"
+        >
+
+
+        <label>
+          Tabungan Sekarang
+        </label>
+
+        <input
+          id="calcCurrent"
+          type="number"
+          placeholder="1000000"
+        >
+
+
+        <label>
+          Waktu Menabung
+        </label>
+
+        <input
+          id="calcMonths"
+          type="number"
+          placeholder="12"
+        >
+
+
+        <button class="primary"
+          onclick="calculateSaving()">
+          🧮 Hitung
+        </button>
+
+
+        <div id="calcResult" class="result">
+          Hasil perhitungan akan muncul di sini.
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= STATISTICS ================= -->
+
+    <section id="statistics" class="page">
+
+      <div class="page-heading">
+
+        <small>Financial Overview</small>
+
+        <h2>Statistik</h2>
+
+      </div>
+
+
+      <div class="stats">
+
+        <div class="card stat">
+          <small>Total Pemasukan</small>
+          <strong id="statIncome">
+            Rp 0
+          </strong>
+        </div>
+
+        <div class="card stat">
+          <small>Total Pengeluaran</small>
+          <strong id="statExpense">
+            Rp 0
+          </strong>
+        </div>
+
+        <div class="card stat">
+          <small>Total Transaksi</small>
+          <strong id="statTransactions">
+            0
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="card-header">
+
+          <div>
+            <small>Financial Chart</small>
+            <h3>Arus Keuangan</h3>
+          </div>
+
+        </div>
+
+        <div class="chart">
+
+          <div class="bar income-bar" id="incomeBar">
+            <span>Pemasukan</span>
+          </div>
+
+          <div class="bar expense-bar" id="expenseBar">
+            <span>Pengeluaran</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ================= TRANSACTION MODAL ================= -->
+
+  <div id="transactionModal" class="modal">
+
+    <div class="modal-box">
+
+      <button class="close"
+        onclick="closeTransaction()">
+        ×
+      </button>
+
+      <h2 id="transactionTitle">
+        Tambah Uang
+      </h2>
+
+
+      <label>
+        Nominal
+      </label>
+
+      <input
+        id="amount"
+        type="number"
+        placeholder="Rp 100.000"
+      >
+
+
+      <label>
+        Keterangan
+      </label>
+
+      <input
+        id="note"
+        type="text"
+        placeholder="Contoh: Uang saku"
+      >
+
+
+      <label>
+        Kategori
+      </label>
+
+      <select id="category">
+
+        <option>
+          Tabungan
+        </option>
+
+        <option>
+          Gaji
+        </option>
+
+        <option>
+          Bonus
+        </option>
+
+        <option>
+          Makanan
+        </option>
+
+        <option>
+          Transportasi
+        </option>
+
+        <option>
+          Belanja
+        </option>
+
+        <option>
+          Lainnya
+        </option>
+
+      </select>
+
+
+      <button class="primary full"
+        onclick="saveTransaction()">
+
+        Simpan Transaksi
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================= GOAL MODAL ================= -->
+
+  <div id="goalModal" class="modal">
+
+    <div class="modal-box">
+
+      <button class="close"
+        onclick="closeGoal()">
+        ×
+      </button>
+
+      <h2>
+        🎯 Target Baru
+      </h2>
+
+
+      <label>
+        Nama Target
+      </label>
+
+      <input
+        id="goalName"
+        type="text"
+        placeholder="Contoh: Laptop Baru"
+      >
+
+
+      <label>
+        Jumlah Target
+      </label>
+
+      <input
+        id="goalAmount"
+        type="number"
+        placeholder="15000000"
+      >
+
+
+      <button class="primary full"
+        onclick="saveGoal()">
+
+        Buat Target
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
